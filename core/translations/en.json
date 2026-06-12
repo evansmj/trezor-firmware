@@ -668,20 +668,8 @@
       "Delizia": "",
       "Eckhart": ""
     },
-    "eos__delegate": {
-      "Bolt": "Delegate",
-      "Caesar": "",
-      "Delizia": "",
-      "Eckhart": ""
-    },
     "eos__delete_auth": {
       "Bolt": "Delete Auth",
-      "Caesar": "",
-      "Delizia": "",
-      "Eckhart": ""
-    },
-    "eos__from": {
-      "Bolt": "From",
       "Caesar": "",
       "Delizia": "",
       "Eckhart": ""
@@ -796,12 +784,6 @@
     },
     "eos__type": {
       "Bolt": "Type",
-      "Caesar": "",
-      "Delizia": "",
-      "Eckhart": ""
-    },
-    "eos__undelegate": {
-      "Bolt": "Undelegate",
       "Caesar": "",
       "Delizia": "",
       "Eckhart": ""
@@ -3052,7 +3034,22 @@
     },
     "tron__claim_unfrozen_balance": "Claim unfrozen balance?",
     "tron__claim_voting_rewards": "Claim voting rewards?",
+    "tron__delegate_resource": "Delegate resource",
+    "tron__lock_period": "Lock period",
+    "tron__lockperiod_blocks": {
+      "Bolt": "Blocks",
+      "Caesar": "Lock period (Blocks)",
+      "Delizia": "Blocks",
+      "Eckhart": "Blocks"
+    },
+    "tron__lockperiod_time": {
+      "Bolt": "Time",
+      "Caesar": "Lock period (Time)",
+      "Delizia": "Time",
+      "Eckhart": "Time"
+    },
     "tron__owner_address": "Owner address",
+    "tron__undelegate_resource": "Undelegate resource",
     "tutorial__continue": {
       "Bolt": "",
       "Caesar": "",
@@ -3399,6 +3396,7 @@
       "Delizia": "",
       "Eckhart": ""
     },
+    "words__delegate": "Delegate",
     "words__deposit": "Deposit",
     "words__device": "Device",
     "words__disabled": {
@@ -3428,6 +3426,7 @@
       "Delizia": "from",
       "Eckhart": ""
     },
+    "words__from_title": "From",
     "words__function": "Function",
     "words__important": "Important",
     "words__instructions": "Instructions",
@@ -3567,6 +3566,7 @@
       "Delizia": "Try again.",
       "Eckhart": "Try again"
     },
+    "words__undelegate": "Undelegate",
     "words__unknown": "Unknown",
     "words__unlimited": "Unlimited",
     "words__unlocked": {
