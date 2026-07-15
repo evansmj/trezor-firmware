@@ -109,8 +109,8 @@ def cli(project: str | Path, version: str) -> None:
         )
         if project.match("core/embed/projects/firmware"):
             # also bump language JSONs
-            subprocess.check_call(
-                ["python", project.parents[2] / "translations" / "cli.py", "gen"]
+            subprocess.run(
+                ["python", project.parents[2] / "translations" / "cli.py", "version", "--reset"]
             )
         if project.match("core/embed/projects/prodtest"):
             # refresh error_codes.json
