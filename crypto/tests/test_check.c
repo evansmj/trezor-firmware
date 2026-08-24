@@ -11766,11 +11766,13 @@ START_TEST(test_noise_kk1_limits) {
 
   // --- Message limit ---
   // The counter occupies the low 6 bytes of the nonce, so it is exhausted after
-  // 2^48 messages. The message that exhausts it is still processed, but the
-  // context is destroyed rather than reused with a wrapped counter.
+  // 2^48 messages. The message that exhausts it is not released: both the
+  // ciphertext and the context are wiped rather than reused with a wrapped
+  // counter.
   uint8_t message5[] = "message5";
   uint8_t ciphertext5[sizeof(message5) + NOISE_KK1_TAG_SIZE] = {0};
   uint8_t plaintext5[sizeof(message5)] = {0};
+  const uint8_t zeros5[sizeof(ciphertext5)] = {0};
 
   memset(responder_context.encryption_nonce, 0, NOISE_KK1_NONCE_SIZE);
   memset(responder_context.encryption_nonce + 6, 0xFF, 6);
@@ -11778,21 +11780,21 @@ START_TEST(test_noise_kk1_limits) {
                                sizeof(message5), ciphertext5);
   ck_assert_int_eq(ret, false);
   ck_assert_int_eq(responder_context.initialized, false);
+  ck_assert_mem_eq(ciphertext5, zeros5, sizeof(ciphertext5));
 
   // Sending again is refused because the context is gone
   ret = noise_kk1_send_message(&responder_context, NULL, 0, message5,
                                sizeof(message5), ciphertext5);
   ck_assert_int_eq(ret, false);
 
-  // The ciphertext produced above is authentic, so the peer does decrypt it,
-  // but its context reaches the limit as well
+  // The peer never receives the wiped message: it does not authenticate, so the
+  // decryption fails and no plaintext is produced
   memset(initiator_context.decryption_nonce, 0, NOISE_KK1_NONCE_SIZE);
   memset(initiator_context.decryption_nonce + 6, 0xFF, 6);
   ret = noise_kk1_receive_message(&initiator_context, NULL, 0, ciphertext5,
                                   sizeof(ciphertext5), plaintext5);
   ck_assert_int_eq(ret, false);
-  ck_assert_int_eq(initiator_context.initialized, false);
-  ck_assert_mem_eq(plaintext5, message5, sizeof(message5));
+  ck_assert_mem_eq(plaintext5, zeros5, sizeof(plaintext5));
 }
 END_TEST
 
@@ -12052,8 +12054,7 @@ START_TEST(test_noise_xxpsk3_limits) {
   // --- Message limit ---
   uint8_t msg[] = "hello";
   uint8_t ciphertext[sizeof(msg) + 16] = {0};
-  uint8_t plaintext[sizeof(msg)] = {0};
-  size_t ciphertext_size = 0, plaintext_size = 0;
+  size_t ciphertext_size = 0;
 
   // The last message below the limit, with the nonce at 2^48 - 1, is still
   // encrypted, which advances the nonce to the limit
