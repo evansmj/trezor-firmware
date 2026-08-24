@@ -211,6 +211,8 @@ static bool encrypt_with_ad(noise_xxpsk3_cipher_state_t *cs, const uint8_t *ad,
   // A nonce at the limit is never used, so the counter below cannot wrap and no
   // message is ever protected with a repeated nonce
   if (!cs->has_key || cs->nonce >= NONCE_LIMIT) {
+    cs->has_key = false;
+    memzero(cs->key, NOISE_XXPSK3_HASHLEN);
     return false;
   } else {
     // Encrypt with AEAD
@@ -264,8 +266,9 @@ static bool decrypt_with_ad(noise_xxpsk3_cipher_state_t *cs, const uint8_t *ad,
                             size_t ad_len, const uint8_t *ciphertext,
                             size_t ciphertext_len, uint8_t *plaintext) {
   if (!cs->has_key || cs->nonce >= NONCE_LIMIT) {
+    cs->has_key = false;
+    memzero(cs->key, NOISE_XXPSK3_HASHLEN);
     return false;
-
   } else {
     if (ciphertext_len < NOISE_XXPSK3_TAG_SIZE) {
       // encrypted message is too short to contain the auth. tag

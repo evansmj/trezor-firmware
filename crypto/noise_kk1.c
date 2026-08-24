@@ -158,7 +158,7 @@ static void split(uint8_t chaining_key[SHA256_DIGEST_LENGTH],
                  "output1 and output2 must be truncated to NOISE_KK1_KEY_SIZE");
 }
 
-// The counter is restricted to 48 bits: 2^48 messages of at most 65535 bytes
+// The counter is restricted to (2^48)-1: 2^48 messages of at most 65535 bytes
 // produce at most 2^60 AES blocks under one key, well below the 2^64 blocks
 // per key that NIST SP 800-38D, Appendix B recommends as a limit.
 // https://tsapps.nist.gov/publication/get_pdf.cfm?pub_id=51288
@@ -340,6 +340,7 @@ bool noise_kk1_send_message(noise_kk1_context_t *ctx,
   if (!increase_nonce(ctx->encryption_nonce)) {
     // Nonce overflow
     memzero(ctx, sizeof(*ctx));
+    memzero(ciphertext, plaintext_length + NOISE_KK1_TAG_SIZE);
     ctx->initialized = false;
     return false;
   }
@@ -368,6 +369,9 @@ bool noise_kk1_receive_message(noise_kk1_context_t *ctx,
   if (!increase_nonce(ctx->decryption_nonce)) {
     // Nonce overflow
     memzero(ctx, sizeof(*ctx));
+    if (plaintext != NULL) {
+      memzero(plaintext, ciphertext_length - NOISE_KK1_TAG_SIZE);
+    }
     ctx->initialized = false;
     return false;
   }

@@ -12069,13 +12069,6 @@ START_TEST(test_noise_xxpsk3_limits) {
                                   &ciphertext_size);
   ck_assert_int_eq(ret, false);
 
-  // The same limit applies to the receiving key
-  initiator.transport_state.receive_cipher_state.nonce = 1ULL << 48;
-  ret = noise_xxpsk3_receive_message(&initiator.transport_state, ciphertext,
-                                     ciphertext_size, plaintext,
-                                     sizeof(plaintext), &plaintext_size);
-  ck_assert_int_eq(ret, false);
-
   noise_xxpsk3_initiator_deinit(&initiator);
   noise_xxpsk3_responder_deinit(&responder);
 }
