@@ -17,7 +17,7 @@ if TYPE_CHECKING:
     from buffer_types import AnyBytes, StrOrBytes
     from typing import Awaitable, Iterable, NoReturn, Sequence, TypeVar
 
-    from trezor.ui.layouts.menu import Details
+    from trezor.ui.layouts.menu import MenuLeaf
 
     from apps.stellar.tokens import StellarToken
 
@@ -484,7 +484,7 @@ async def confirm_payment_request(
     menu_items = []
     if recipient_address is not None:
         menu_items.append(
-            create_details(TR.address__title_provider_address, recipient_address)
+            create_info_menu_leaf(TR.address__title_provider_address, recipient_address)
         )
     for refund in refunds:
         refund_account_info: list[StrPropertyType] = [("", refund.address, True)]
@@ -495,7 +495,7 @@ async def confirm_payment_request(
                 (TR.address_details__derivation_path, refund.account_path, True)
             )
         menu_items.append(
-            create_details(
+            create_info_menu_leaf(
                 TR.address__title_refund_address,
                 refund_account_info,
             )
@@ -596,7 +596,7 @@ async def confirm_output(
         )
     if account_properties:
         menu_items = [
-            create_details(
+            create_info_menu_leaf(
                 TR.address_details__account_info,
                 account_properties,
                 title=TR.address_details__account_info,
@@ -858,7 +858,11 @@ async def confirm_value(
     from trezor.ui.layouts.menu import Menu, confirm_with_menu
 
     menu_items = (
-        [create_details(info_title or TR.words__title_information, list(info_items))]
+        [
+            create_info_menu_leaf(
+                info_title or TR.words__title_information, list(info_items)
+            )
+        ]
         if info_items
         else []
     )
@@ -1005,9 +1009,11 @@ async def confirm_trade(
         account_info.append(
             (TR.address_details__derivation_path, trade.account_path, True)
         )
-    menu_items = [create_details(TR.address__title_receive_address, account_info)]
+    menu_items = [
+        create_info_menu_leaf(TR.address__title_receive_address, account_info)
+    ]
     for k, v in extra_menu_items:
-        menu_items.append(create_details(k, v))
+        menu_items.append(create_info_menu_leaf(k, v))
     menu = Menu.root(menu_items, TR.send__cancel_sign)
 
     with trade_ctx as trade_layout:
@@ -1117,7 +1123,7 @@ if not utils.BITCOIN_ONLY:
         account_properties = _get_account_info_items(account, account_path)
         if account_properties:
             menu_items = [
-                create_details(
+                create_info_menu_leaf(
                     TR.address_details__account_info,
                     account_properties,
                     title=TR.address_details__account_info,
@@ -1361,7 +1367,7 @@ if not utils.BITCOIN_ONLY:
         account_properties = _get_account_info_items(account, account_path)
         if account_properties:
             menu_items.append(
-                create_details(
+                create_info_menu_leaf(
                     TR.address_details__account_info,
                     account_properties,
                     title=TR.address_details__account_info,
@@ -1475,7 +1481,7 @@ if not utils.BITCOIN_ONLY:
         account_properties = _get_account_info_items(account, account_path)
         if account_properties:
             menu_items.append(
-                create_details(
+                create_info_menu_leaf(
                     TR.address_details__account_info,
                     account_properties,
                     title=TR.address_details__account_info,
@@ -1574,8 +1580,8 @@ if not utils.BITCOIN_ONLY:
                 (TR.cardano__nonce, str(nonce), False),
             ]
             children = [
-                create_details(TR.address_details__account_info, account_info),
-                create_details(TR.buttons__more_info, more_info),
+                create_info_menu_leaf(TR.address_details__account_info, account_info),
+                create_info_menu_leaf(TR.buttons__more_info, more_info),
             ]
             await confirm_with_menu(
                 layout,
@@ -1598,9 +1604,9 @@ if not utils.BITCOIN_ONLY:
         ]
         menu = Menu.root(
             children=[
-                create_details(TR.address_details__account_info, account_info),
+                create_info_menu_leaf(TR.address_details__account_info, account_info),
                 # TODO: switch to non-Cardano specific string
-                create_details(TR.cardano__nonce, str(nonce)),
+                create_info_menu_leaf(TR.cardano__nonce, str(nonce)),
             ],
             cancel=TR.buttons__cancel,
         )
@@ -1652,11 +1658,11 @@ if not utils.BITCOIN_ONLY:
             TR.ethereum__staking_stake,
             TR.ethereum__staking_unstake,
         )
-        menu_items = [create_details(address_title, address, None)]
+        menu_items = [create_info_menu_leaf(address_title, address, None)]
         account_properties = _get_account_info_items(account, account_path)
         if account_properties:
             menu_items.append(
-                create_details(
+                create_info_menu_leaf(
                     TR.address_details__account_info,
                     account_properties,
                     title=TR.address_details__account_info,
@@ -1765,7 +1771,7 @@ if not utils.BITCOIN_ONLY:
         from trezor.ui.layouts.menu import Menu, interact_with_menu
 
         menu_items = [
-            create_details(
+            create_info_menu_leaf(
                 TR.address_details__account_info,
                 _get_account_info_items(account, account_path),
                 title=TR.address_details__account_info,
@@ -1774,14 +1780,14 @@ if not utils.BITCOIN_ONLY:
         ]
         if stake_item:
             menu_items.append(
-                create_details(
+                create_info_menu_leaf(
                     stake_item[0] or "", [(None, stake_item[1], stake_item[2])], None
                 )
             )
 
         summary_menu_items = [
-            create_details(blockhash_item[0] or "", [blockhash_item], None),
-            create_details(TR.confirm_total__title_fee, list(fee_details), None),
+            create_info_menu_leaf(blockhash_item[0] or "", [blockhash_item], None),
+            create_info_menu_leaf(TR.confirm_total__title_fee, list(fee_details), None),
         ]
 
         extra = TR.words__provider if vote_account else ""
@@ -1985,7 +1991,7 @@ if not utils.BITCOIN_ONLY:
         account_properties = _get_account_info_items(account, account_path)
         if account_properties:
             menu_items.append(
-                create_details(
+                create_info_menu_leaf(
                     TR.address_details__account_info,
                     account_properties,
                     title=TR.address_details__account_info,
@@ -2622,15 +2628,15 @@ async def tutorial(br_code: ButtonRequestType = BR_CODE_OTHER) -> None:
         return await raise_if_not_confirmed(layout, "tutorial", br_code)
 
 
-def create_details(
+def create_info_menu_leaf(
     name: str,
     value: Sequence[StrPropertyType] | str,
     title: str | None = None,
     subtitle: str | None = None,
-) -> Details:
-    from trezor.ui.layouts.menu import Details
+) -> MenuLeaf:
+    from trezor.ui.layouts.menu import MenuLeaf
 
-    return Details.from_layout(
+    return MenuLeaf.from_layout(
         name,
         lambda: trezorui_api.show_properties(
             title=(title or name), subtitle=subtitle, value=value
