@@ -48,6 +48,8 @@ void tropic_random_reseed(uint32_t seed) {
 }
 
 bool tropic_random_buffer(void* buffer, size_t length) {
+  // Return false if the Tropic session cannot start, matching the real
+  // implementation.
   if (!tropic_session_start()) {
     return false;
   }
