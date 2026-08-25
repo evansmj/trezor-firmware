@@ -19,7 +19,7 @@ from __future__ import annotations
 import logging
 import socket
 import time
-from typing import TYPE_CHECKING, Iterable, Tuple
+from typing import TYPE_CHECKING, Iterable
 
 from ..log import DUMP_PACKETS
 from . import Timeout, Transport, TransportException
@@ -48,7 +48,7 @@ class UdpTransport(Transport):
             devparts = device.split(":")
             host = devparts[0]
             port = int(devparts[1]) if len(devparts) > 1 else UdpTransport.DEFAULT_PORT
-        self.device: Tuple[str, int] = (host, port)
+        self.device: tuple[str, int] = (host, port)
 
         self.socket: socket.socket | None = None
         super().__init__()

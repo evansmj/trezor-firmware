@@ -14,8 +14,10 @@
 # You should have received a copy of the License along with this library.
 # If not, see <https://www.gnu.org/licenses/lgpl-3.0.html>.
 
+from __future__ import annotations
+
 from fnmatch import fnmatch
-from typing import TYPE_CHECKING, List, Optional
+from typing import TYPE_CHECKING
 
 import click
 
@@ -27,7 +29,7 @@ if TYPE_CHECKING:
     from ..client import Session
 
 
-def list_names_patern(session: "Session", pattern: Optional[str] = None) -> List[str]:
+def list_names_patern(session: "Session", pattern: str | None = None) -> list[str]:
     names = list(benchmark.list_names(session).names)
     if pattern is None:
         return names
@@ -42,7 +44,7 @@ def cli() -> None:
 @cli.command()
 @click.argument("pattern", required=False)
 @with_session(passphrase=False)
-def list_names(session: "Session", pattern: Optional[str] = None) -> None:
+def list_names(session: "Session", pattern: str | None = None) -> None:
     """List names of all supported benchmarks"""
     names = list_names_patern(session, pattern)
     if len(names) == 0:
@@ -55,7 +57,7 @@ def list_names(session: "Session", pattern: Optional[str] = None) -> None:
 @cli.command()
 @click.argument("pattern", required=False)
 @with_session(passphrase=False)
-def run(session: "Session", pattern: Optional[str]) -> None:
+def run(session: "Session", pattern: str | None) -> None:
     """Run benchmark"""
     names = list_names_patern(session, pattern)
     if len(names) == 0:

@@ -17,13 +17,13 @@
 from __future__ import annotations
 
 from dataclasses import dataclass
-from typing import Collection, Tuple
+from typing import Collection
 
 from . import _modeldata as _md
 from . import mapping, messages
 from ._modeldata import registry as _registry
 
-UsbId = Tuple[int, int]
+UsbId = tuple[int, int]
 
 VENDORS = ("bitcointrezor.com", "trezor.io")
 

@@ -25,7 +25,7 @@ import socket
 import subprocess
 import time
 from pathlib import Path
-from typing import Any, Dict, Iterable, List, Optional, Sequence, TextIO, Union, cast
+from typing import Any, Iterable, Sequence, TextIO, Union, cast
 
 from ..debuglink import DebugLinkNotFound, TrezorTestContext
 from ..transport import Transport
@@ -71,7 +71,7 @@ class TropicModel:
             configfile_output or self.profile_dir / "tropic_model_config_output.yml"
         )
         self.logfile = logfile or self.profile_dir / "trezor-tropic-model.log"
-        self.process: Optional[subprocess.Popen] = None
+        self.process: subprocess.Popen | None = None
 
     def start(self) -> None:
         self.process = self._launch_process()
@@ -167,7 +167,7 @@ class Emulator:
         profile_dir: str,
         *,
         logfile: Union[TextIO, str, Path, None] = None,
-        storage: Optional[bytes] = None,
+        storage: bytes | None = None,
         headless: bool = False,
         debug: bool = True,
         auto_interact: bool = True,
@@ -217,10 +217,10 @@ class Emulator:
             raise RuntimeError
         return self._client
 
-    def make_args(self) -> List[str]:
+    def make_args(self) -> list[str]:
         return []
 
-    def make_env(self) -> Dict[str, str]:
+    def make_env(self) -> dict[str, str]:
         return os.environ.copy()
 
     def _get_transport(self) -> UdpTransport:
@@ -248,7 +248,7 @@ class Emulator:
 
         LOG.info(f"Emulator ready after {time.monotonic() - start:.3f} seconds")
 
-    def wait(self, timeout: Optional[float] = None) -> int:
+    def wait(self, timeout: float | None = None) -> int:
         assert self.process is not None, "Emulator not started"
         ret = self.process.wait(timeout=timeout)
         _RUNNING_PIDS.remove(self.process)
@@ -277,8 +277,8 @@ class Emulator:
 
     def start(
         self,
-        transport: Optional[UdpTransport] = None,
-        debug_transport: Optional[Transport] = None,
+        transport: UdpTransport | None = None,
+        debug_transport: Transport | None = None,
     ) -> None:
         if self.process:
             if self.process.poll() is not None:
@@ -366,14 +366,14 @@ class CoreEmulator(Emulator):
     def __init__(
         self,
         *args: Any,
-        tropic_model_port: Optional[int] = None,
-        port: Optional[int] = None,
+        tropic_model_port: int | None = None,
+        port: int | None = None,
         main_args: Sequence[str] = ("-m", "main"),
-        workdir: Optional[Path] = None,
-        sdcard: Optional[bytes] = None,
+        workdir: Path | None = None,
+        sdcard: bytes | None = None,
         disable_animation: bool = True,
         heap_size: str = "20M",
-        display_scale: Optional[float] = None,
+        display_scale: float | None = None,
         **kwargs: Any,
     ) -> None:
         super().__init__(*args, **kwargs)
@@ -393,7 +393,7 @@ class CoreEmulator(Emulator):
         self.heap_size = heap_size
         self.display_scale = display_scale
 
-    def make_env(self) -> Dict[str, str]:
+    def make_env(self) -> dict[str, str]:
         env = super().make_env()
         env.update(
             TREZOR_PROFILE_DIR=str(self.profile_dir),
@@ -411,7 +411,7 @@ class CoreEmulator(Emulator):
 
         return env
 
-    def make_args(self) -> List[str]:
+    def make_args(self) -> list[str]:
         pyopt = "-O0" if self.debug else "-O1"
         return (
             [pyopt, "-X", f"heapsize={self.heap_size}"]
@@ -463,7 +463,7 @@ class CoreEmulator(Emulator):
 class LegacyEmulator(Emulator):
     STORAGE_FILENAME = "emulator.img"
 
-    def make_env(self) -> Dict[str, str]:
+    def make_env(self) -> dict[str, str]:
         env = super().make_env()
         if self.headless:
             env["SDL_VIDEODRIVER"] = "dummy"
