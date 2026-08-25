@@ -27,6 +27,9 @@
 #endif
 
 // Guard against this file ever being compiled into a bare-metal build.
+// These checks are intentionally duplicated across all mock RNGs to prevent
+// their accidental removal.
+
 _Static_assert(sizeof(void*) == 8,
                "Mock RNG compiled for a 32-bit target -- device build?");
 

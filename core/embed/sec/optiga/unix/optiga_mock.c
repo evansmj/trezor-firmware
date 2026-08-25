@@ -23,6 +23,8 @@
 #include <sys/rng_mock.h>
 
 // Guard against this file ever being compiled into a bare-metal build.
+// These checks are intentionally duplicated across all mock RNGs to prevent
+// their accidental removal.
 
 #ifndef TREZOR_EMULATOR
 #error "Mock RNG must not be compiled into a non-emulator build"
