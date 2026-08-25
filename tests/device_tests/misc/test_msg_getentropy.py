@@ -99,6 +99,15 @@ def test_entropy_hardware_rng(session: Session, entropy_length):
     assert len(ent) == entropy_length
     assert ent.hex() != mock_entropy
 
+    with session.test_ctx as client:
+        client.set_expected_responses(
+            [m.ButtonRequest(code=m.ButtonRequestType.ProtectCall), m.Entropy]
+        )
+        ent2 = misc.get_entropy(session, entropy_length)
+
+    assert len(ent2) == entropy_length
+    assert ent2 != ent
+
 
 @pytest.mark.models("core")
 @pytest.mark.emulator
